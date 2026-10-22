@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>网文文本智能分析系统 v1.15</title>
+    <title>网文文本智能分析系统 v1.2</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     
@@ -91,13 +91,19 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
 
 
 /* v1.1：精简入口与五步分析流程。 */
-.home-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:780px;margin:clamp(16px,7vh,80px) auto}
-.home-action{display:flex;align-items:center;justify-content:space-between;padding:28px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-family:inherit;font-weight:600;font-size:17px;line-height:1.5;min-height:90px;text-align:left;transition:background .15s,border-color .15s}
-.home-action:hover{border-color:var(--accent);background:var(--accent-bg)}.home-action.primary{background:var(--accent);border-color:var(--accent);color:white}.home-action.demo-action{grid-column:1/-1;min-height:48px;padding:15px 28px;font-size:14px}
-.home-action:focus-visible,.nav button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+/* v1.2：单一入口，装饰不承载交互与说明文字。 */
+#home{width:100%;max-width:none;padding:24px;min-height:calc(100svh - 54px);background:radial-gradient(ellipse at 50% 42%,var(--paper),transparent 65%)}
+#home.active{display:grid;place-items:center}
+.start-stage{display:flex;flex-direction:column;align-items:center;gap:22px;padding:24px 0 64px}
+.start-art{width:clamp(220px,30vw,360px);max-width:100%;height:auto}
+.start-button{display:flex;align-items:center;justify-content:center;gap:46px;min-height:54px;min-width:176px;padding:14px 25px;border:1px solid var(--accent);border-radius:16px;background:var(--accent);color:white;font-size:17px;font-weight:600;box-shadow:0 8px 24px #a05c431c;transition:transform .18s,box-shadow .18s}
+.start-button:hover{transform:translateY(-2px);box-shadow:0 12px 26px #a05c4330}.start-button:active{transform:translateY(0)}
+.start-button:focus-visible,.nav button:focus-visible{outline:3px solid var(--accent);outline-offset:5px}
+@media(max-width:900px){#home{min-height:calc(100svh - 110px)}}
+@media(max-height:600px){.start-stage{gap:12px;padding:8px 0}.start-art{width:210px}}
 #analyze .page-heading{margin-bottom:20px}#analyze .section-heading{margin-bottom:22px}#analyze .step-footer{justify-content:space-between}#setup-source .step-footer{justify-content:flex-end}#analyze .status:empty,#configStatus:empty,#cleanInfo:empty{display:none}
 .setup-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.setup-tabs .sidebar-item{min-width:0;white-space:nowrap;text-align:center;padding:14px 8px}
-@media(max-width:700px){.home-actions{gap:12px;margin:20px auto}.home-action{padding:20px 16px;font-size:15px;min-height:80px}.setup-tabs{display:flex;overflow-x:auto;flex-wrap:nowrap}.setup-tabs .sidebar-item{flex:0 0 auto}.header-actions{flex-wrap:wrap}}
+@media(max-width:700px){.setup-tabs{display:flex;overflow-x:auto;flex-wrap:nowrap}.setup-tabs .sidebar-item{flex:0 0 auto}.header-actions{flex-wrap:wrap}}
 </style>
 </head>
 
@@ -107,7 +113,7 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
     <nav class="nav" id="mainNav" aria-label="主导航">
         <div class="nav-brand">
             <div class="brand-mark">文</div>
-            <div><strong>文析</strong><small>网文分析 · v1.15</small></div>
+            <div><strong>文析</strong><small>网文分析 · v1.2</small></div>
         </div>
         <div class="nav-scroll"><button data-page="home" onclick="goPage('home')" class="active-nav">首页</button><button data-page="analyze" onclick="goPage('analyze')">文本分析</button><button data-page="res-ngram" onclick="goPage('res-ngram')">高频字串</button><button data-page="res-chart" onclick="goPage('res-chart')">词汇分布</button><button data-page="report" onclick="goPage('report')">分析报告</button><details class="nav-group"><summary>研究工具</summary><button data-page="aliases" onclick="goPage('aliases')">人物与别名</button><button data-page="chapters" onclick="goPage('chapters')">章节洞察</button><button data-page="profiles" onclick="goPage('profiles')">人物概览</button><button data-page="quotes" onclick="goPage('quotes')">引用素材库</button><button data-page="timeline" onclick="goPage('timeline')">人物时间线</button><button data-page="workshop" onclick="goPage('workshop')">书评工作台</button></details></div><div class="nav-footer">
             <span class="nav-footer-label">当前文本</span>
@@ -118,12 +124,19 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
 <div class="workspace-bar"><strong>文析工作台</strong><span id="workspaceLocation">首页</span><span id="workspaceText">尚未加载文本</span></div>
     <!-- 首页 -->
     <main id="home" class="page active">
-<div class="home-actions" aria-label="功能入口">
-<button class="home-action primary" onclick="goPage('analyze');switchAnalyzeStep('source')">文本分析 <span aria-hidden="true">→</span></button>
-<button class="home-action" onclick="goPage('res-ngram')">高频字串</button>
-<button class="home-action" onclick="goPage('res-chart')">词汇分布</button>
-<button class="home-action" onclick="goPage('report')">分析报告</button>
-<button class="home-action demo-action" onclick="loadDemo()">载入示例</button>
+<div class="start-stage">
+<svg class="start-art" viewBox="0 0 360 280" fill="none" aria-hidden="true" focusable="false">
+  <circle cx="180" cy="140" r="110" fill="var(--accent-bg)"/>
+  <circle cx="180" cy="140" r="134" stroke="var(--line)" stroke-dasharray="2 9"/>
+  <g transform="rotate(-9 180 140)"><rect x="100" y="56" width="150" height="184" rx="14" fill="var(--nav)" stroke="#d8c6b8"/></g>
+  <rect x="112" y="43" width="150" height="184" rx="14" fill="var(--paper)" stroke="#d8c6b8"/>
+  <path d="M140 79H204M140 98H234M140 130H234M140 149H218M140 168H234M140 187H188" stroke="#d7d0c7" stroke-width="5" stroke-linecap="round"/>
+  <path d="M140 130H188M170 168H223" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="259" cy="207" r="28" fill="var(--accent)"/>
+  <path d="m247 208 8 8 16-18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M77 91v12m-6-6h12M290 113v8m-4-4h8" stroke="#bc967d" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<button type="button" class="start-button" onclick="goPage('analyze');switchAnalyzeStep('source')">开始 <span aria-hidden="true">→</span></button>
 </div></main>
 
     <!-- ========== 2. 停用词设置 ========== -->
@@ -832,7 +845,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
             });
         }
 
-        // 默认填充两组示例（演示多词同一行：主角团里有"霍雨浩 雨浩 浩"作为同一目标的多个变体）
+        // 无已保存配置时创建空白目标分组。
         function ensureDefaultGroups() {
             if (groups.length === 0) {
                 addGroup('', []);
@@ -1019,17 +1032,6 @@ self.onmessage=e=>{const d=e.data;try{let value;
         document.getElementById('pasteText').addEventListener('input',e=>{
             ++fileToken; rawText=e.target.value; inputSource='paste'; inputName='粘贴文本'; inputEncoding=''; inputStatus();
         });
-        function loadDemo() {
-            const demo=[
-                '第一章 雪夜。林舟走进旧书店，发现一张绘着星图的纸。掌柜说，星图曾属于失踪的陆遥。林舟把星图带回城中。陆遥留下的线索指向北塔。',
-                '第二章 北塔。林舟与阿遥在塔下相遇。阿遥也叫陆遥。两人研究星图，发现星图中的标记对应古井。掌柜悄悄跟在林舟后面。',
-                '第三章 古井。陆遥告诉林舟，古井下藏着第二张星图。林舟沿着石阶下去，掌柜突然现身。阿遥挡住掌柜，林舟拿到了星图。',
-                '第四章 回城。林舟和陆遥合上两张星图，北塔的秘密终于显现。掌柜离开旧书店，阿遥决定陪林舟再去北塔。'
-            ].join('\n\n');
-            const field=document.getElementById('pasteText'); field.value=demo; field.dispatchEvent(new Event('input'));
-            groups=[{id:makeGroupId(),label:'人物',words:['林舟','陆遥 阿遥','掌柜']},{id:makeGroupId(),label:'线索',words:['星图','北塔','古井']}];
-            renderGroups(); saveConfig(); goPage('analyze'); switchAnalyzeStep('run'); notify('示例已载入，点击“开始分析”查看结果');
-        }
 
         // ===== 获取全部停用词 =====
         function getAllStopwords() {
@@ -2183,7 +2185,7 @@ buildReport=async function(){reportReadiness();const title=$('reportTitle').valu
 for(const id of reportFlags())$(id).addEventListener('change',()=>{reportReadiness();saveResearchSettings();});
 try{restoreV8(JSON.parse(localStorage.getItem(RESEARCH_KEY)||'null'));}catch(e){}
 
-        // ===== 初始化：默认填充两组示例分组 =====
+        // ===== 初始化：恢复配置或创建空白分组 =====
         if(!loadConfig())ensureDefaultGroups();
     </script>
 </body>
