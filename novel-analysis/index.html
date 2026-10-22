@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>网文文本智能分析系统</title>
+    <title>网文文本智能分析系统 v1.1</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     
@@ -73,7 +73,7 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
 .research-tools input[type=number]{width:85px}.research-tools input[type=checkbox]{accent-color:var(--accent)}
 .research-form{display:grid;grid-template-columns:2fr 1fr 2fr;gap:16px;margin-bottom:20px}.research-form label{display:grid;gap:8px;font-size:12px;color:var(--muted)}
 .research-form input,.research-form select,#reportTitle,#quoteTags{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--paper);color:var(--ink)}
-#userDictionary,#reportNotes,#quoteNote{display:block;resize:vertical;width:100%;min-height:110px;border:1px solid var(--line);border-radius:9px;padding:12px;background:var(--paper);color:var(--ink);margin:8px 0 18px}
+#reportNotes,#quoteNote{display:block;resize:vertical;width:100%;min-height:110px;border:1px solid var(--line);border-radius:9px;padding:12px;background:var(--paper);color:var(--ink);margin:8px 0 18px}
 .reader-body{white-space:pre-wrap;overflow-wrap:anywhere;padding:30px clamp(12px,3vw,40px);font-size:17px;line-height:2.1;max-width:830px;margin:auto;min-height:220px}.reader-body mark{scroll-margin-top:70px}
 .pagination{display:flex;justify-content:center;align-items:center;gap:15px;margin-top:22px;color:var(--muted);font-size:12px}.pagination button,.row-actions button{border:1px solid var(--line);border-radius:7px;padding:6px 11px;background:var(--paper);color:var(--muted)}
 .pagination button:hover,.row-actions button:hover{background:var(--accent-bg);color:var(--accent)}
@@ -89,6 +89,15 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
 @media(max-width:1200px){.workshop-grid{grid-template-columns:170px minmax(300px,1fr)}.workshop-grid>aside:last-child{grid-column:1/-1}.draft-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-height:370px}}
 @media(max-width:900px){.workspace-bar{padding:10px 18px}.task-status{left:50%}.wide-page{padding:26px 18px}.workshop-grid{grid-template-columns:1fr}.workshop-grid>aside:last-child{grid-column:auto}.draft-evidence{grid-template-columns:1fr}.workspace-bar span:last-child{max-width:35%}.task-status{flex-wrap:wrap;min-width:280px}.task-status span{min-width:100px}.bar-line{grid-template-columns:75px minmax(50px,1fr) 60px}}
 
+
+/* v1.1：精简入口与五步分析流程。 */
+.home-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:780px;margin:clamp(16px,7vh,80px) auto}
+.home-action{display:flex;align-items:center;justify-content:space-between;padding:28px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-family:inherit;font-weight:600;font-size:17px;line-height:1.5;min-height:90px;text-align:left;transition:background .15s,border-color .15s}
+.home-action:hover{border-color:var(--accent);background:var(--accent-bg)}.home-action.primary{background:var(--accent);border-color:var(--accent);color:white}.home-action.demo-action{grid-column:1/-1;min-height:48px;padding:15px 28px;font-size:14px}
+.home-action:focus-visible,.nav button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#analyze .page-heading{margin-bottom:20px}#analyze .section-heading{margin-bottom:22px}#analyze .step-footer{justify-content:space-between}#setup-source .step-footer{justify-content:flex-end}#analyze .status:empty,#configStatus:empty,#cleanInfo:empty{display:none}
+.setup-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.setup-tabs .sidebar-item{min-width:0;white-space:nowrap;text-align:center;padding:14px 8px}
+@media(max-width:700px){.home-actions{gap:12px;margin:20px auto}.home-action{padding:20px 16px;font-size:15px;min-height:80px}.setup-tabs{display:flex;overflow-x:auto;flex-wrap:nowrap}.setup-tabs .sidebar-item{flex:0 0 auto}.header-actions{flex-wrap:wrap}}
 </style>
 </head>
 
@@ -98,36 +107,26 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
     <nav class="nav" id="mainNav" aria-label="主导航">
         <div class="nav-brand">
             <div class="brand-mark">文</div>
-            <div><strong>文析</strong><small>网文观察台</small></div>
+            <div><strong>文析</strong><small>网文分析 · v1.1</small></div>
         </div>
-        <div class="nav-scroll"><button class="active-nav" data-page="home" onclick="goPage('home')">概览</button><details class="nav-group" open><summary>文本准备</summary><button data-page="analyze" onclick="goPage('analyze')">文本分析</button><button data-page="clean" onclick="goPage('clean')">正文清理</button><button data-page="stopword-set" onclick="goPage('stopword-set')">停用词设置</button><button data-page="aliases" onclick="goPage('aliases')">人物与别名</button></details><details class="nav-group" open><summary>统计分析</summary><button data-page="res-ngram" onclick="goPage('res-ngram')">高频字串</button><button data-page="res-chart" onclick="goPage('res-chart')">词汇分布</button><button data-page="chapters" onclick="goPage('chapters')">章节洞察</button><button data-page="profiles" onclick="goPage('profiles')">人物概览</button><button data-page="wordstats" onclick="goPage('wordstats')">中文分词</button><button data-page="books" onclick="goPage('books')">多文本对比</button></details><details class="nav-group" open><summary>阅读整理</summary><button data-page="reader" onclick="goPage('reader')">原文阅读</button><button data-page="quotes" onclick="goPage('quotes')">引用素材库</button><button data-page="timeline" onclick="goPage('timeline')">人物时间线</button><button data-page="workshop" onclick="goPage('workshop')">书评工作台</button></details><details class="nav-group" open><summary>报告导出</summary><button data-page="report" onclick="goPage('report')">分析报告</button></details></div>
-        <div class="nav-footer">
+        <div class="nav-scroll"><button data-page="home" onclick="goPage('home')" class="active-nav">首页</button><button data-page="analyze" onclick="goPage('analyze')">文本分析</button><button data-page="res-ngram" onclick="goPage('res-ngram')">高频字串</button><button data-page="res-chart" onclick="goPage('res-chart')">词汇分布</button><button data-page="reader" onclick="goPage('reader')">原文阅读</button><button data-page="books" onclick="goPage('books')">多文本对比</button><button data-page="report" onclick="goPage('report')">分析报告</button><details class="nav-group"><summary>研究工具</summary><button data-page="aliases" onclick="goPage('aliases')">人物与别名</button><button data-page="chapters" onclick="goPage('chapters')">章节洞察</button><button data-page="profiles" onclick="goPage('profiles')">人物概览</button><button data-page="quotes" onclick="goPage('quotes')">引用素材库</button><button data-page="timeline" onclick="goPage('timeline')">人物时间线</button><button data-page="workshop" onclick="goPage('workshop')">书评工作台</button></details></div><div class="nav-footer">
             <span class="nav-footer-label">当前文本</span>
             <span class="nav-status" id="navStatus">尚未加载文本</span>
-            <span class="nav-private">文本仅在本机浏览器中处理</span>
-        </div>
+            </div>
     </nav>
 
-<div class="workspace-bar"><strong>文析工作台</strong><span id="workspaceLocation">概览</span><span id="workspaceText">尚未加载文本</span></div>
+<div class="workspace-bar"><strong>文析工作台</strong><span id="workspaceLocation">首页</span><span id="workspaceText">尚未加载文本</span></div>
     <!-- 首页 -->
     <main id="home" class="page active">
-        <div class="home-hero">
-            <div class="eyebrow">文析 · 小说文本工作台</div>
-            <h1>从一部小说开始，<br>看清它的词汇与人物脉络。</h1>
-            <p class="home-desc">导入正文，查找高频字串，观察人物和设定在章节中的出场变化。整个分析过程在浏览器中完成。</p>
-            <div class="hero-actions">
-                <button class="btn" onclick="goPage('analyze');switchAnalyzeStep('source')">开始分析 <span aria-hidden="true">→</span></button>
-                <button class="btn btn-secondary" onclick="loadDemo()">使用示例体验</button>
-            </div>
-            <div class="hero-note">支持 TXT 文件与直接粘贴 · 原文不会上传</div>
-        </div>
-        <div class="home-section-head"><h2>工作流程</h2><span>三步完成一次分析</span></div>
-        <div class="step-grid">
-            <div class="step-card"><span class="step-num">01</span><h3>导入文本</h3><p>选择 TXT 文件，或粘贴一段小说正文。</p></div>
-            <div class="step-card"><span class="step-num">02</span><h3>设置目标</h3><p>把人物、地点与设定分组，合并不同称呼。</p></div>
-            <div class="step-card"><span class="step-num">03</span><h3>查看结果</h3><p>搜索原文、查看章节趋势并导出数据。</p></div>
-        </div>
-    </main>
+<div class="home-actions" aria-label="功能入口">
+<button class="home-action primary" onclick="goPage('analyze');switchAnalyzeStep('source')">文本分析 <span aria-hidden="true">→</span></button>
+<button class="home-action" onclick="goPage('res-ngram')">高频字串</button>
+<button class="home-action" onclick="goPage('res-chart')">词汇分布</button>
+<button class="home-action" onclick="goPage('reader')">原文阅读</button>
+<button class="home-action" onclick="goPage('books')">多文本对比</button>
+<button class="home-action" onclick="goPage('report')">分析报告</button>
+<button class="home-action demo-action" onclick="loadDemo()">载入示例</button>
+</div></main>
 
     <!-- ========== 2. 停用词设置 ========== -->
     <div id="stopword-set" class="page">
@@ -270,7 +269,7 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
     <!-- 文本分析 -->
     <main id="analyze" class="page">
         <div class="page-header">
-            <div class="page-heading"><div class="eyebrow">工作空间</div><h1>文本分析</h1><p>导入正文并设置目标词汇，然后生成统计结果。</p></div>
+            <div class="page-heading"><h1>文本分析</h1></div>
             <div class="header-actions">
                 <button class="text-button" onclick="exportConfig()">导出配置</button>
                 <button class="text-button" onclick="document.getElementById('configInput').click()">导入配置</button>
@@ -282,13 +281,13 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
         </div>
         <div class="sidebar setup-tabs" role="tablist" aria-label="文本分析步骤">
             <button class="sidebar-item active" id="setup-tab-source" role="tab" aria-selected="true" aria-controls="setup-source" onclick="switchAnalyzeStep('source')">01　导入正文</button>
-            <button class="sidebar-item" id="setup-tab-targets" role="tab" aria-selected="false" aria-controls="setup-targets" onclick="switchAnalyzeStep('targets')">02　目标词汇</button>
-            <button class="sidebar-item" id="setup-tab-filters" role="tab" aria-selected="false" aria-controls="setup-filters" onclick="switchAnalyzeStep('filters')">03　筛选设置</button>
-            <button class="sidebar-item" id="setup-tab-run" role="tab" aria-selected="false" aria-controls="setup-run" onclick="switchAnalyzeStep('run')">04　运行与导出</button>
+            <button class="sidebar-item" id="setup-tab-cleaning" role="tab" aria-selected="false" aria-controls="setup-cleaning" onclick="switchAnalyzeStep('cleaning')">02　正文清理</button><button class="sidebar-item" id="setup-tab-targets" role="tab" aria-selected="false" aria-controls="setup-targets" onclick="switchAnalyzeStep('targets')">03　目标词汇</button>
+            <button class="sidebar-item" id="setup-tab-filters" role="tab" aria-selected="false" aria-controls="setup-filters" onclick="switchAnalyzeStep('filters')">04　筛选设置</button>
+            <button class="sidebar-item" id="setup-tab-run" role="tab" aria-selected="false" aria-controls="setup-run" onclick="switchAnalyzeStep('run')">05　运行与导出</button>
         </div>
         <div class="setup-content">
             <section class="surface setup-pane active" id="setup-source" role="tabpanel" aria-labelledby="setup-tab-source">
-                <div class="section-heading"><span class="section-number">01</span><div><h2>导入正文</h2><p>选择 TXT 文件，或者直接粘贴小说文本。</p></div></div>
+                <div class="section-heading"><span class="section-number">01</span><div><h2>导入正文</h2></div></div>
                 <div class="file-row">
                     <input type="file" id="fileInput" accept=".txt" aria-label="选择 TXT 文件">
                     <select id="encodingSelect" aria-label="文件编码">
@@ -300,36 +299,37 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
                     </select>
                 </div>
                 <div class="source-divider"><span>或者粘贴文本</span></div>
-                <textarea id="pasteText" class="paste-area" placeholder="在这里粘贴小说正文或片段。若同时选了文件，以最后修改的输入为准。"></textarea>
-                <div class="source-footer"><span>乱码时可切换文件编码重新读取</span><span class="status" id="loadTip" role="status" aria-live="polite"></span></div>
-                <div class="step-footer"><span>正文只在当前浏览器中处理</span><button class="btn" onclick="switchAnalyzeStep('targets')">下一步：目标词汇 →</button></div>
+                <textarea id="pasteText" class="paste-area" placeholder="粘贴正文" aria-label="正文"></textarea>
+                <div class="source-footer"><span class="status" id="loadTip" role="status" aria-live="polite"></span></div>
+                <div class="step-footer"><button class="btn" onclick="switchAnalyzeStep('cleaning')">下一步：正文清理 →</button></div>
             </section>
-            <section class="surface setup-pane" id="setup-targets" role="tabpanel" aria-labelledby="setup-tab-targets">
-                <div class="section-heading"><span class="section-number">02</span><div><h2>目标词汇</h2><p>每行一个目标；同一行用空格分隔别名，例如“霍雨浩 雨浩”。留空也可以统计高频字串。</p></div></div>
+            <section class="surface setup-pane" id="setup-cleaning" role="tabpanel" aria-labelledby="setup-tab-cleaning"><div class="section-heading"><span class="section-number">02</span><div><h2>正文清理</h2></div></div><div class="research-tools"><label><input id="cleanUrl" type="checkbox" checked> 含网址的行</label><label><input id="cleanAds" type="checkbox" checked> 疑似广告</label><label><input id="cleanNotes" type="checkbox" checked> 作者附言</label><label><input id="cleanLines" type="checkbox" checked> 重复段落</label><label><input id="cleanChapters" type="checkbox" checked> 重复章节</label></div><div class="research-tools"><button class="btn" onclick="scanCleaning()">检查候选内容</button><button class="chart-download" onclick="selectCleanAll(true)">全选候选</button><button class="chart-download" onclick="selectCleanAll(false)">取消全选</button><button class="btn btn-secondary" onclick="previewCleaning()">预览清理</button><button class="btn btn-secondary" onclick="applyCleaning()">应用已选清理</button><button class="chart-download" onclick="undoCleaning()">撤销清理</button></div><p id="cleanInfo" class="tip"></p><div id="cleanCandidates" class="clean-list"></div><div id="cleanPreview" class="clean-preview" hidden></div><div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('source')">← 上一步</button><button class="btn" onclick="switchAnalyzeStep('targets')">下一步：目标词汇 →</button></div></section>
+    <section class="surface setup-pane" id="setup-targets" role="tabpanel" aria-labelledby="setup-tab-targets">
+                <div class="section-heading"><span class="section-number">03</span><div><h2>目标词汇</h2></div></div>
                 <div id="wordGroups"></div>
                 <div class="group-actions"><button class="btn-add" onclick="addGroup()">＋ 添加分组</button><button class="btn-clear" onclick="clearGroups()">清空分组</button></div>
-                <div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('source')">← 上一步</button><button class="btn" onclick="switchAnalyzeStep('filters')">下一步：筛选设置 →</button></div>
+                <div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('cleaning')">← 上一步</button><button class="btn" onclick="switchAnalyzeStep('filters')">下一步：筛选设置 →</button></div>
             </section>
             <section class="surface setup-pane" id="setup-filters" role="tabpanel" aria-labelledby="setup-tab-filters">
-                <div class="section-heading"><span class="section-number">03</span><div><h2>筛选设置</h2><p>以下设置仅影响高频字串，不影响目标词汇和章节趋势。</p></div></div>
+                <div class="section-heading"><span class="section-number">04</span><div><h2>筛选设置</h2></div></div>
                 <div class="filter-fields">
-                    <div><label class="field-label" for="mustInclude">必须包含的字或词</label><input type="text" id="mustInclude" placeholder="留空则不限制"><p class="field-help">最多 5 个连续汉字；例如输入“星图”只保留包含它的字串。</p></div>
+                    <div><label class="field-label" for="mustInclude">必须包含的字或词</label><input type="text" id="mustInclude" placeholder="留空则不限制"></div>
                     <div><label class="field-label" for="customStopword">本次额外停用词</label><textarea id="customStopword" class="stopword-small" placeholder="每行一个字或词"></textarea><button class="inline-link" onclick="goPage('stopword-set')">编辑通用停用词 →</button></div>
                 </div>
                 <div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('targets')">← 上一步</button><button class="btn" onclick="switchAnalyzeStep('run')">下一步：运行分析 →</button></div>
             </section>
             <section class="surface setup-pane setup-run" id="setup-run" role="tabpanel" aria-labelledby="setup-tab-run">
-                <div class="section-heading"><span class="section-number">04</span><div><h2>运行与导出</h2><p>检查输入与设置，然后生成高频字串、原文位置和章节趋势。</p></div></div>
+                <div class="section-heading"><span class="section-number">05</span><div><h2>运行与导出</h2></div></div>
                 <div class="setup-overview">
-                    <button onclick="switchAnalyzeStep('source')"><span>正文</span><strong id="overviewSource">尚未导入</strong><small>查看或修改 →</small></button>
-                    <button onclick="switchAnalyzeStep('targets')"><span>目标词汇</span><strong id="overviewTargets">未设置</strong><small>查看或修改 →</small></button>
-                    <button onclick="switchAnalyzeStep('filters')"><span>字串筛选</span><strong id="overviewFilters">默认设置</strong><small>查看或修改 →</small></button>
+                    <button onclick="switchAnalyzeStep('source')"><span>正文</span><strong id="overviewSource">尚未导入</strong></button>
+                    <button onclick="switchAnalyzeStep('targets')"><span>目标词汇</span><strong id="overviewTargets">未设置</strong></button>
+                    <button onclick="switchAnalyzeStep('filters')"><span>字串筛选</span><strong id="overviewFilters">默认设置</strong></button>
                 </div>
                 <div class="setup-run-actions"><button class="btn" id="analyzeBtn" onclick="startAnalyze()">开始分析 →</button><button class="btn btn-secondary" id="exportBtn" onclick="exportExcel()" disabled>导出摘要 Excel</button></div>
                 <div class="status" id="analysisStatus" role="status" aria-live="polite"></div>
                 <div class="progress-track" id="progressTrack" hidden><span id="progressBar"></span></div>
-                <p class="config-note" id="configStatus">分组与筛选设置自动保存在当前浏览器；小说正文不会保存。</p>
-                <div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('filters')">← 上一步</button><span>分析完成后自动打开结果页</span></div>
+                <p class="config-note" id="configStatus" role="status"></p>
+                <div class="step-footer"><button class="btn btn-secondary" onclick="switchAnalyzeStep('filters')">← 上一步</button></div>
             </section>
         </div>
     </main>
@@ -424,12 +424,6 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
                 </button>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-section">比例与统计</div>
-                <button class="sidebar-item" onclick="switchChart('treemap')">
-                    <span class="sidebar-icon">🟦</span> 矩形树图
-                </button>
-                <button class="sidebar-item" onclick="switchChart('scatter')">
-                    <span class="sidebar-icon">⚫</span> 散点图
-                </button>
                 <button class="sidebar-item" onclick="switchChart('funnel')">
                     <span class="sidebar-icon">🔻</span> 漏斗图
                 </button>
@@ -507,40 +501,8 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
                     </div>
                 </div>
 
-                <!-- 矩形树图 -->
-                <div id="chart-sub-treemap" class="sub-page">
-                    <div class="chart-box">
-                        <div class="chart-head">
-                            <div class="chart-title">🟦 词汇分布矩形树图（层级占比）</div>
-                            <div class="chart-head-right">
-                                <div class="seg-switcher">
-                                    <button class="seg-btn active" onclick="switchSeg('treemap',10)">10 段</button>
-                                    <button class="seg-btn" onclick="switchSeg('treemap',20)">20 段</button>
-                                    <button class="seg-btn" onclick="switchSeg('treemap',40)">40 段</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chart-container-full" id="chartTreemap"></div>
-                    </div>
-                </div>
-
-                <!-- 散点图 -->
-                <div id="chart-sub-scatter" class="sub-page">
-                    <div class="chart-box">
-                        <div class="chart-head">
-                            <div class="chart-title">⚫ 词汇分段散点图（密集分布）</div>
-                            <div class="chart-head-right">
-                                <div class="seg-switcher">
-                                    <button class="seg-btn active" onclick="switchSeg('scatter',10)">10 段</button>
-                                    <button class="seg-btn" onclick="switchSeg('scatter',20)">20 段</button>
-                                    <button class="seg-btn" onclick="switchSeg('scatter',40)">40 段</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="chart-container-full" id="chartScatter"></div>
-                    </div>
-                </div>
-
+                
+                
                 <!-- 漏斗图 -->
                 <div id="chart-sub-funnel" class="sub-page">
                     <div class="chart-box">
@@ -605,21 +567,13 @@ input[type=file]{width:100%;min-width:0;padding:7px;border:1px solid #dedbd5;bor
       <div class="page-header"><div class="page-heading"><div class="eyebrow">分析结果</div><h1>人物概览</h1><p>按目标词汇统计首次、最后出现和章节覆盖。别名采用最长优先、非重叠匹配。</p></div><button class="btn btn-secondary" onclick="loadProfiles()">刷新统计</button></div>
       <div class="research-tools"><label>分组 <select id="profileGroup" onchange="renderProfiles()"></select></label><input id="profileSearch" placeholder="搜索人物或目标词汇" oninput="renderProfiles()"></div><div id="profileCards" class="profile-grid"></div>
     </div>
-    <div id="wordstats" class="page">
-      <div class="page-header"><div class="page-heading"><div class="eyebrow">分析结果</div><h1>中文分词</h1><p>按完整词语统计；自定义词典优先匹配，停用词在分词后按整词排除。</p></div><button class="btn btn-secondary" onclick="exportWords()">导出词频 CSV</button></div>
-      <section class="surface research-panel"><label class="field-label" for="userDictionary">自定义词典（每行一个人名、地名或专有名词）</label><textarea id="userDictionary" placeholder="林舟&#10;星图&#10;北塔" oninput="dictionaryChanged()"></textarea><div class="research-tools"><label><input id="dictTargets" type="checkbox" checked onchange="dictionaryChanged()"> 将目标词汇与别名加入词典</label><button class="btn" onclick="runSegmentation()">生成词频统计</button></div><p id="wordInfo" class="tip"></p><div class="research-tools"><input id="wordSearch" placeholder="搜索词语"><label>最低次数 <input id="wordMin" type="number" min="1" value="1"></label><button class="chart-download" onclick="queryWords(0)">筛选</button></div><div id="wordTable" class="table-scroll"></div><div class="pagination"><button id="wordPrev" onclick="queryWords(wordPage-1)">上一页</button><span id="wordPageLabel"></span><button id="wordNext" onclick="queryWords(wordPage+1)">下一页</button></div></section>
-    </div>
-    <div id="clean" class="page">
-      <div class="page-heading"><div class="eyebrow">文本准备</div><h1>正文清理</h1><p>检查网址、推广语、作者附言及重复内容。勾选后先预览，再应用；可撤销最近三次清理。</p></div>
-      <section class="surface research-panel"><div class="research-tools"><label><input id="cleanUrl" type="checkbox" checked> 含网址的行</label><label><input id="cleanAds" type="checkbox" checked> 疑似广告</label><label><input id="cleanNotes" type="checkbox" checked> 作者附言</label><label><input id="cleanLines" type="checkbox" checked> 重复段落</label><label><input id="cleanChapters" type="checkbox" checked> 重复章节</label></div><div class="research-tools"><button class="btn" onclick="scanCleaning()">检查候选内容</button><button class="chart-download" onclick="selectCleanAll(true)">全选候选</button><button class="chart-download" onclick="selectCleanAll(false)">取消全选</button><button class="btn btn-secondary" onclick="previewCleaning()">预览清理</button><button class="btn btn-secondary" onclick="applyCleaning()">应用已选清理</button><button class="chart-download" onclick="undoCleaning()">撤销清理</button></div><p id="cleanInfo" class="tip"></p><div id="cleanCandidates" class="clean-list"></div><div id="cleanPreview" class="clean-preview" hidden></div></section>
-    </div>
     <div id="books" class="page">
       <div class="page-heading"><div class="eyebrow">分析结果</div><h1>多文本对比</h1><p>添加不同小说或修订稿，以每万汉字次数比较词汇与人物出场。</p></div>
-      <section class="surface research-panel"><div class="research-tools"><input id="bookFiles" type="file" accept=".txt" multiple onchange="addBookFiles(event)"><button class="chart-download" onclick="addCurrentBook()">加入当前正文</button></div><div id="bookList"></div><div class="research-tools"><label>对比内容 <select id="bookMode"><option value="targets">目标词汇与别名</option><option value="words">高频完整词语</option></select></label><button class="btn" onclick="compareBooks()">开始对比</button><button class="btn btn-secondary" onclick="exportBookComparison()">导出 CSV</button></div><p id="bookInfo" class="tip"></p><div class="research-tools"><label>图表口径 <select id="bookChartMetric" onchange="renderBookBars()"><option value="rate">每万汉字次数</option><option value="count">出现次数</option></select></label></div><div id="bookBars" class="comparison-bars" hidden></div><div id="bookTable" class="table-scroll"></div></section>
+      <section class="surface research-panel"><div class="research-tools"><input id="bookFiles" type="file" accept=".txt" multiple onchange="addBookFiles(event)"><button class="chart-download" onclick="addCurrentBook()">加入当前正文</button></div><div id="bookList"></div><div class="research-tools"><button class="btn" onclick="compareBooks()">开始对比</button><button class="btn btn-secondary" onclick="exportBookComparison()">导出 CSV</button></div><p id="bookInfo" class="tip"></p><div class="research-tools"><label>图表口径 <select id="bookChartMetric" onchange="renderBookBars()"><option value="rate">每万汉字次数</option><option value="count">出现次数</option></select></label></div><div id="bookBars" class="comparison-bars" hidden></div><div id="bookTable" class="table-scroll"></div></section>
     </div>
     <div id="report" class="page">
       <div class="page-heading"><div class="eyebrow">整理与导出</div><h1>分析报告</h1><p>汇总选定统计、已打开的图表、引用和自己的备注，导出可独立打开的报告。</p></div>
-      <section class="surface research-panel"><div class="research-tools"><label>报告模板 <select id="reportTemplate" onchange="applyReportTemplate()"><option value="all">综合分析</option><option value="person">人物分析</option><option value="review">整本书评</option><option value="versions">版本对比</option></select></label><label>字串范围 <select id="reportNgramScope" onchange="saveResearchSettings()"><option value="top">各字数前 20 项</option><option value="filtered">全部筛选结果</option></select></label><label>词语范围 <select id="reportWordScope" onchange="saveResearchSettings()"><option value="filtered">全部筛选结果</option><option value="page">当前结果页</option></select></label></div><div id="reportReadiness" class="report-notice" hidden></div><label class="field-label" for="reportTitle">报告标题</label><input id="reportTitle" value="小说文本分析报告" oninput="saveResearchSettings()"><label class="field-label report-note-label" for="reportNotes">分析备注</label><textarea id="reportNotes" placeholder="在这里写下你的发现与评价" oninput="saveResearchSettings()"></textarea><div class="research-tools report-options"><label><input id="repSummary" type="checkbox" checked> 分析概况</label><label><input id="repProfiles" type="checkbox" checked> 人物概览</label><label><input id="repNgrams" type="checkbox" checked> 高频字串</label><label><input id="repWords" type="checkbox" checked> 完整词语</label><label><input id="repComparison" type="checkbox" checked> 章节对比</label><label><input id="repBooks" type="checkbox" checked> 多文本对比</label><label><input id="repQuotes" type="checkbox" checked> 当前文本引用</label></div><div class="research-tools"><label><input id="repTimeline" type="checkbox" checked> 人物时间线</label><label><input id="repDrafts" type="checkbox" checked> 书评稿件</label></div><div id="reportCharts" class="research-tools"></div><div class="research-tools"><button class="btn" onclick="previewReport()">预览报告</button><button class="btn btn-secondary" onclick="exportReport()">导出 HTML 报告</button><button class="btn btn-secondary" onclick="printReport()">打印 / 保存 PDF</button></div><iframe id="reportPreview" title="分析报告预览" sandbox="" hidden></iframe></section>
+      <section class="surface research-panel"><div class="research-tools"><label>报告模板 <select id="reportTemplate" onchange="applyReportTemplate()"><option value="all">综合分析</option><option value="person">人物分析</option><option value="review">整本书评</option><option value="versions">版本对比</option></select></label><label>字串范围 <select id="reportNgramScope" onchange="saveResearchSettings()"><option value="top">各字数前 20 项</option><option value="filtered">全部筛选结果</option></select></label></div><div id="reportReadiness" class="report-notice" hidden></div><label class="field-label" for="reportTitle">报告标题</label><input id="reportTitle" value="小说文本分析报告" oninput="saveResearchSettings()"><label class="field-label report-note-label" for="reportNotes">分析备注</label><textarea id="reportNotes" placeholder="在这里写下你的发现与评价" oninput="saveResearchSettings()"></textarea><div class="research-tools report-options"><label><input id="repSummary" type="checkbox" checked> 分析概况</label><label><input id="repProfiles" type="checkbox" checked> 人物概览</label><label><input id="repNgrams" type="checkbox" checked> 高频字串</label><label><input id="repComparison" type="checkbox" checked> 章节对比</label><label><input id="repBooks" type="checkbox" checked> 多文本对比</label><label><input id="repQuotes" type="checkbox" checked> 当前文本引用</label></div><div class="research-tools"><label><input id="repTimeline" type="checkbox" checked> 人物时间线</label><label><input id="repDrafts" type="checkbox" checked> 书评稿件</label></div><div id="reportCharts" class="research-tools"></div><div class="research-tools"><button class="btn" onclick="previewReport()">预览报告</button><button class="btn btn-secondary" onclick="exportReport()">导出 HTML 报告</button><button class="btn btn-secondary" onclick="printReport()">打印 / 保存 PDF</button></div><iframe id="reportPreview" title="分析报告预览" sandbox="" hidden></iframe></section>
     </div>
     <div class="context-backdrop" id="quoteBackdrop" hidden onclick="closeQuoteEditor()"></div>
     <section class="context-panel" id="quoteEditor" role="dialog" aria-modal="true" aria-labelledby="quoteEditorTitle" hidden><div class="context-head"><h2 id="quoteEditorTitle">收藏原文引用</h2><button class="context-close" onclick="closeQuoteEditor()" aria-label="关闭">×</button></div><label class="field-label">分类<select id="quoteCategory"><option>未分类</option><option>人物经历</option><option>性格表现</option><option>人物关系</option><option>世界观</option><option>伏笔</option></select></label><blockquote id="quoteExact" class="quote-exact"></blockquote><label class="field-label">标签（逗号分隔）<input id="quoteTags" placeholder="人物经历，性格，设定"></label><label class="field-label">备注<textarea id="quoteNote" placeholder="你的评价或待核查的问题"></textarea></label><button class="btn" onclick="saveQuote()">保存收藏</button></section>
@@ -778,7 +732,7 @@ self.onmessage=e=>{
 };
     </script>
     <script id="researchWorkerSource" type="text/plain">
-let text='',wordRows=[],segmentSettings='';
+let text='';
 const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 const han=s=>(s.match(/[\u3400-\u9fff]/g)||[]).length;
 function matcher(words){return new RegExp([...new Set(words.filter(Boolean))].sort((a,b)=>b.length-a.length).map(esc).join('|'),'g');}
@@ -792,16 +746,6 @@ function search(d){
  return {total,rows,page:d.page,terms};
 }
 function profiles(d){return d.entries.map(e=>{const hits=matches(e.words),byAlias=Object.fromEntries(e.words.map(w=>[w,0])),coverage=new Set();for(const h of hits){byAlias[h.hit]++;if(d.chapters.length)coverage.add(chapterIndex(h.pos,d.chapters));}return {...e,total:hits.length,first:hits[0]?.pos??-1,last:hits.at(-1)?.pos??-1,coverage:coverage.size,byAlias};});}
-function segment(source,dictionary,stop){
- if(typeof Intl.Segmenter!=='function')throw Error('当前浏览器不支持中文分词，请使用新版 Chrome 或 Edge');
- const segmenter=new Intl.Segmenter('zh',{granularity:'word'}),counts=new Map(),stopSet=new Set(stop),root=new Map();
- for(const word of [...new Set(dictionary.filter(Boolean))]){let node=root;for(const c of word){if(!node.has(c))node.set(c,new Map());node=node.get(c);}node.end=word;}
- const add=word=>{if(word&&!stopSet.has(word)&&/[\u3400-\u9fffA-Za-z]/.test(word))counts.set(word,(counts.get(word)||0)+1);};
- const flush=s=>{for(const token of segmenter.segment(s))if(token.isWordLike)add(token.segment);};
- let buffer=0,i=0;
- while(i<source.length){let node=root,j=i,found='',last=i;while(j<source.length&&node.has(source[j])){node=node.get(source[j++]);if(node.end){found=node.end;last=j;}}if(found){flush(source.slice(buffer,i));add(found);i=last;buffer=i;}else i++;}
- flush(source.slice(buffer));return [...counts].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'zh'));
-}
 function cooccur(d){
  const a=matches(d.a),b=matches(d.b),rows=[];let total=0;
  if(d.scope==='window'){
@@ -821,18 +765,14 @@ function cleaning(d){
 }
 function books(d){
  const docs=d.docs.map(doc=>({...doc,chars:han(doc.text)})),rows=[];
- if(d.mode==='targets')for(const e of d.entries)rows.push({word:e.display,counts:docs.map(doc=>matches(e.words,doc.text).length)});
- else {const maps=docs.map(doc=>new Map(segment(doc.text,d.dictionary,d.stop))),terms=new Set();for(const map of maps)for(const word of [...map.keys()].slice(0,100))terms.add(word);for(const word of terms)rows.push({word,counts:maps.map(map=>map.get(word)||0)});}
+ for(const e of d.entries)rows.push({word:e.display,counts:docs.map(doc=>matches(e.words,doc.text).length)});
  for(const r of rows){r.rates=r.counts.map((v,i)=>docs[i].chars?v*10000/docs[i].chars:0);r.spread=Math.max(...r.rates)-Math.min(...r.rates);}
  rows.sort((a,b)=>b.spread-a.spread);return {docs:docs.map(({name,chars})=>({name,chars})),rows};
 }
 self.onmessage=e=>{const d=e.data;try{let value;
- if(d.type==='SET_TEXT'){if(text!==d.text){text=d.text;wordRows=[];segmentSettings='';}return;}
+ if(d.type==='SET_TEXT'){text=d.text;return;}
  if(d.type==='SEARCH')value=search(d);
  else if(d.type==='PROFILES')value=profiles(d);
- else if(d.type==='SEGMENT'){const key=JSON.stringify([d.dictionary,d.stop]);if(segmentSettings!==key){wordRows=segment(text,d.dictionary,d.stop);segmentSettings=key;}value={total:wordRows.length,tokens:wordRows.reduce((n,r)=>n+r[1],0)};}
- else if(d.type==='WORD_QUERY'){const filtered=wordRows.filter(r=>r[0].includes(d.q)&&r[1]>=d.min);value={rows:filtered.slice(d.page*100,(d.page+1)*100),total:filtered.length,page:d.page};}
- else if(d.type==='WORD_CSV')value=wordRows;
  else if(d.type==='COOCCUR')value=cooccur(d);
  else if(d.type==='CLEAN')value=cleaning(d);
  else if(d.type==='BOOKS')value=books(d);
@@ -848,7 +788,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
         // 存储各分段数的分布数据
         const wordDistCache = {};
         // 当前各图表使用的分段数
-        const currentSeg = { line: 10, area: 10, heatmap: 10, treemap: 10, scatter: 10 };
+        const currentSeg = { line: 10, area: 10, heatmap: 10 };
 
         // ===== 分组词汇管理 =====
         // groups = [{ id, label, words[] }]
@@ -924,10 +864,10 @@ self.onmessage=e=>{const d=e.data;try{let value;
                 div.innerHTML = `
                     <div class="word-group-head">
                         <span class="word-group-tag">分组 ${i + 1}</span>
-                        <input type="text" id="${g.id}-label" placeholder="组标签（例如：主角团、反派、魂导器）" value="${escapeHtml(g.label)}" style="flex:1; margin-top:0; padding:8px 12px; font-size:13px;">
+                        <input type="text" id="${g.id}-label" placeholder="分组名称" value="${escapeHtml(g.label)}" style="flex:1; margin-top:0; padding:8px 12px; font-size:13px;">
                         <button class="btn-mini" onclick="removeGroup('${g.id}')">✕ 删除</button>
                     </div>
-                    <textarea id="${g.id}-words" placeholder="每行一个目标词汇；同行可用空格分隔多个词，这些词会一起统计（例如：霍雨浩 雨浩 浩）">${escapeHtml((g.words || []).join('\n'))}</textarea>
+                    <textarea id="${g.id}-words" placeholder="目标词汇 / 别名">${escapeHtml((g.words || []).join('\n'))}</textarea>
                 `;
                 container.appendChild(div);
             });
@@ -963,7 +903,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
         }
 
         function switchAnalyzeStep(name){
-            const steps=['source','targets','filters','run'];
+            const steps=['source','cleaning','targets','filters','run'];
             if(!steps.includes(name))return;
             for(const key of steps){
                 const active=key===name;
@@ -980,7 +920,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
             const count=(rawText.match(/[\u3400-\u9fff]/g)||[]).length;
             document.getElementById('overviewSource').textContent=rawText?(inputName||'已导入文本')+' · '+count.toLocaleString()+' 汉字':'尚未导入';
             const targetCount=groups.reduce((n,g)=>n+g.words.filter(Boolean).length,0);
-            document.getElementById('overviewTargets').textContent=targetCount?targetCount+' 个目标 · '+groups.length+' 个分组':'未设置（可仅统计高频字串）';
+            document.getElementById('overviewTargets').textContent=targetCount?targetCount+' 个目标 · '+groups.length+' 个分组':'未设置';
             const must=document.getElementById('mustInclude').value.trim(),extra=document.getElementById('customStopword').value.split('\n').filter(w=>w.trim()).length;
             document.getElementById('overviewFilters').textContent=(must?'包含“'+must+'”':'不限字串')+(extra?' · '+extra+' 个额外停用词':'');
         }
@@ -1008,7 +948,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
         // ===== 词汇分布可视化 左侧导航切换 =====
         function switchChart(name) {
             document.querySelectorAll('#res-chart .sidebar-item').forEach(b => b.classList.remove('active'));
-            const chartMap = { chapter: 0, line: 1, area: 2, sunburst: 3, heatmap: 4, treemap: 5, scatter: 6, funnel: 7 };
+            const chartMap = { chapter: 0, line: 1, area: 2, sunburst: 3, heatmap: 4, funnel: 5 };
             document.querySelectorAll('#res-chart .sidebar-item')[chartMap[name]].classList.add('active');
             document.querySelectorAll('#res-chart .sub-page').forEach(c => c.classList.remove('active'));
             document.getElementById('chart-sub-' + name).classList.add('active');
@@ -1264,8 +1204,6 @@ self.onmessage=e=>{const d=e.data;try{let value;
                 case 'area': renderAreaChart(chartData); break;
                 case 'sunburst': renderSunburstChart(chartData); break;
                 case 'heatmap': renderHeatmapChart(chartData); break;
-                case 'treemap': renderTreemapChart(chartData); break;
-                case 'scatter': renderScatterChart(chartData); break;
                 case 'funnel': renderFunnelChart(chartData); break;
             }
         }
@@ -1428,154 +1366,6 @@ self.onmessage=e=>{const d=e.data;try{let value;
                     },
                     animationDuration: 1000
                 }]
-            }, true);
-        }
-
-        // ===== 5. 矩形树图（Treemap）=====
-        // 层级：组标签 → 词汇 → 各分段（按频次大小切分矩形）
-        function renderTreemapChart(chartData, overrideSeg) {
-            const seg = overrideSeg || currentSeg.treemap;
-            const chart = getOrCreateChart('chartTreemap');
-            const displays = Object.keys(chartData);
-
-            // 按组标签聚合
-            const groupMap = new Map();  // group -> [{ display, counts, total }]
-            displays.forEach(display => {
-                const { group } = parseGroupFromDisplay(display);
-                const counts = chartData[display];
-                const total = counts.reduce((a, b) => a + b, 0);
-                if (!groupMap.has(group)) groupMap.set(group, []);
-                groupMap.get(group).push({ display, counts, total });
-            });
-
-            // 构建 3 层数据：group → word → segment（过滤掉零值节点，避免空块）
-            const data = [...groupMap.keys()].map(group => {
-                const items = groupMap.get(group);
-                const wordChildren = items
-                    .filter(item => item.total > 0)
-                    .map(item => {
-                        const segChildren = [];
-                        item.counts.forEach((c, idx) => {
-                            if (c > 0) {
-                                segChildren.push({ name: `第${idx + 1}段`, value: c });
-                            }
-                        });
-                        return {
-                            name: item.display,
-                            value: item.total,
-                            children: segChildren
-                        };
-                    });
-                const groupTotal = wordChildren.reduce((s, w) => s + w.value, 0);
-                return {
-                    name: group,
-                    value: groupTotal,
-                    children: wordChildren
-                };
-            }).filter(g => g.value > 0 && g.children.length > 0);
-
-            chart.setOption({
-                tooltip: {
-                    formatter: info => `${info.name}<br/>频次：${info.value || 0}`
-                },
-                series: [{
-                    type: 'treemap',
-                    data: data,
-                    roam: false,
-                    nodeClick: 'zoomToNode',
-                    breadcrumb: { show: true, bottom: 5, itemStyle: { color: 'rgba(102,126,234,0.08)' } },
-                    label: {
-                        show: true,
-                        formatter: '{b}',
-                        color: '#fff',
-                        fontSize: 12,
-                        fontWeight: 600
-                    },
-                    upperLabel: {
-                        show: true,
-                        height: 22,
-                        color: '#fff',
-                        fontSize: 13,
-                        fontWeight: 700
-                    },
-                    levels: [
-                        // 第 0 层：组标签
-                        {
-                            itemStyle: { borderColor: '#fff', borderWidth: 4, gapWidth: 4 },
-                            upperLabel: { show: false }
-                        },
-                        // 第 1 层：词汇（顶部显示所属组标签）
-                        {
-                            itemStyle: { borderColor: '#fff', borderWidth: 2, gapWidth: 2 },
-                            upperLabel: { show: true }
-                        },
-                        // 第 2 层：分段（叶子，自动派生颜色）
-                        {
-                            colorSaturation: [0.3, 0.5],
-                            itemStyle: { borderColor: '#fff', borderWidth: 1, gapWidth: 1 },
-                            upperLabel: { show: false }
-                        }
-                    ],
-                    animationDuration: 1200,
-                    animationEasing: 'cubicOut'
-                }]
-            }, true);
-        }
-
-        // ===== 6. 散点图（Scatter）=====
-        // 横轴：分段序号；纵轴：出现次数；每个词汇一个系列
-        function renderScatterChart(chartData, overrideSeg) {
-            const seg = overrideSeg || currentSeg.scatter;
-            const chart = getOrCreateChart('chartScatter');
-            const series = Object.keys(chartData).map((word, i) => {
-                const color = SOLID_COLORS[i % SOLID_COLORS.length];
-                const data = chartData[word].map((v, idx) => [idx, v]);
-                return {
-                    name: word,
-                    type: 'scatter',
-                    data: data,
-                    symbolSize: function(val) {
-                        // 散点大小根据频次微调
-                        return Math.min(20, Math.max(5, Math.sqrt(val[1]) * 1.6));
-                    },
-                    itemStyle: {
-                        color: color,
-                        opacity: 0.75,
-                        borderColor: '#fff',
-                        borderWidth: 1,
-                        shadowBlur: 6,
-                        shadowColor: color + '60'
-                    },
-                    emphasis: {
-                        itemStyle: { opacity: 1, shadowBlur: 12 }
-                    }
-                };
-            });
-            chart.setOption({
-                tooltip: {
-                    trigger: 'item',
-                    formatter: p => `${p.seriesName} · 第${p.data[0] + 1}段<br/>频次：${p.data[1]}`
-                },
-                legend: { top: 0, textStyle: { fontSize: 12 } },
-                grid: { left: 60, right: 30, top: 50, bottom: 50 },
-                xAxis: {
-                    type: 'value',
-                    name: '分段序号',
-                    nameLocation: 'middle',
-                    nameGap: 30,
-                    nameTextStyle: { fontSize: 12 },
-                    min: 0,
-                    max: seg - 1,
-                    axisLabel: { fontSize: seg <= 40 ? 10 : 8, formatter: v => `${v + 1}` }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: '出现次数',
-                    nameTextStyle: { fontSize: 12 }
-                },
-                series: series,
-                animationDuration: 1000,
-                animationEasing: 'cubicOut'
             }, true);
         }
 
@@ -2222,7 +2012,7 @@ self.onmessage=e=>{const d=e.data;try{let value;
 // 阅读、引用与扩展统计
 let researchWorker=null,researchURL='',researchText='',researchSeq=0;
 const researchRequests=new Map();
-let quoteItems=[],quoteDraft=null,profileRows=[],wordPage=0,wordLastRows=[],wordReady=false,wordTotal=0;
+let quoteItems=[],quoteDraft=null,profileRows=[];
 let readerStart=0,readerEnd=0,readerFocus=null,searchPage=0,searchRows=[],scenePage=0,sceneRows=[];
 let cleanRows=[],cleanPreviewText=null,cleanPreviewKey='',cleanUndo=[],bookDocs=[],bookResult=null;
 const RESEARCH_KEY='wenxi-research-v1';
@@ -2246,7 +2036,6 @@ function researchChapters(){
  return bounds.map((ch,i)=>({...ch,end:bounds[i+1]?.start??rawText.length}));
 }
 function researchEntries(){syncGroupsFromUI();const seen=new Set(),out=[];for(const group of groups)for(const line of group.words){const words=[...new Set(line.trim().split(/\s+/).filter(Boolean))];if(!words.length)continue;const label=group.label||'未分组',display='['+label+'] '+words.join('/');if(!seen.has(display)){seen.add(display);out.push({display,group:label,words});}}return out;}
-function dictWords(){const dictionary=document.getElementById('userDictionary').value.split('\n').map(w=>w.trim()).filter(Boolean);if(document.getElementById('dictTargets').checked)dictionary.push(...researchEntries().flatMap(e=>e.words));return [...new Set(dictionary)];}
 function sourceID(){return rawText?textFingerprint(rawText):'';}
 function fillResearchSelect(id,options,value){const el=document.getElementById(id);el.innerHTML=options.map(o=>'<option value="'+escapeHtml(o.value)+'">'+escapeHtml(o.label)+'</option>').join('');if(options.some(o=>String(o.value)===String(value)))el.value=String(value);}
 function readerTab(name){document.getElementById('reader-read').hidden=name!=='read';document.getElementById('reader-search').hidden=name!=='search';document.querySelectorAll('#reader .sidebar-item').forEach((b,i)=>b.classList.toggle('active',(i===0)===(name==='read')));}
@@ -2288,12 +2077,8 @@ function exportQuotes(){const items=filteredQuotes();if(!items.length)return not
 async function loadProfiles(){if(!rawText)return notify('请先导入文本');const entries=researchEntries();if(!entries.length)return notify('请先设置人物或目标词汇');document.getElementById('profileCards').innerHTML='<div class="empty-tip">正在统计人物与别名…</div>';try{profileRows=await researchTask('PROFILES',{entries,chapters:researchChapters()});fillResearchSelect('profileGroup',[{value:'all',label:'全部分组'},...[...new Set(entries.map(e=>e.group))].map(g=>({value:g,label:g}))],document.getElementById('profileGroup').value);renderProfiles();}catch(e){notify(e.message);}}
 function profileLocation(pos){if(pos<0)return'未出现';const ch=researchChapters().find(c=>pos>=c.start&&pos<c.end);return(ch?.title||'全文')+' · 位置 '+pos;}
 function renderProfiles(){fillResearchSelect('profileGroup',[{value:'all',label:'全部分组'},...[...new Set(profileRows.map(e=>e.group))].map(g=>({value:g,label:g}))],document.getElementById('profileGroup').value);const group=document.getElementById('profileGroup').value,q=document.getElementById('profileSearch').value;const rows=profileRows.filter(e=>(!group||group==='all'||e.group===group)&&e.display.includes(q));document.getElementById('profileCards').innerHTML=rows.length?rows.map(e=>'<article class="surface research-panel"><h2>'+escapeHtml(e.display)+'</h2><div class="profile-numbers"><span><b>'+e.total+'</b> 次出现</span><span><b>'+e.coverage+'</b> 章覆盖</span></div><p>首次：'+(e.first<0?'未出现':'<button class="word-link" onclick="openReaderAt('+e.first+')">'+escapeHtml(profileLocation(e.first))+'</button>')+'</p><p>最后：'+(e.last<0?'未出现':'<button class="word-link" onclick="openReaderAt('+e.last+')">'+escapeHtml(profileLocation(e.last))+'</button>')+'</p><div class="alias-list">'+Object.entries(e.byAlias).map(([w,n])=>'<span>'+escapeHtml(w)+'：'+n+' 次</span>').join('')+'</div></article>').join(''):'<div class="empty-tip">暂无匹配的目标词汇</div>';}
-async function runSegmentation(){if(!rawText)return notify('请先导入文本');document.getElementById('wordInfo').textContent='正在分词…';try{const data=await researchTask('SEGMENT',{dictionary:dictWords(),stop:getAllStopwords()});wordReady=true;wordTotal=data.total;document.getElementById('wordInfo').textContent=data.total.toLocaleString()+' 种词语 · '+data.tokens.toLocaleString()+' 个词次。分词可能拆错专有名词，可加入词典后重算。';await queryWords(0);}catch(e){document.getElementById('wordInfo').textContent=e.message;}}
-async function queryWords(page=0){if(!wordReady)return notify('请先生成分词统计');try{const data=await researchTask('WORD_QUERY',{q:document.getElementById('wordSearch').value,min:Math.max(1,Number(document.getElementById('wordMin').value)||1),page:Math.max(0,page)});wordPage=data.page;wordLastRows=data.rows;document.getElementById('wordTable').innerHTML='<table><thead><tr><th>排名</th><th>完整词语</th><th>次数</th></tr></thead><tbody>'+data.rows.map((r,i)=>'<tr><td>'+(data.page*100+i+1)+'</td><td><button class="word-link" data-term="'+escapeHtml(r[0])+'">'+escapeHtml(r[0])+'</button></td><td>'+r[1]+'</td></tr>').join('')+'</tbody></table>';updatePager('word',data.page,data.total);}catch(e){notify(e.message);}}
-document.getElementById('wordTable').addEventListener('click',e=>{const b=e.target.closest('[data-term]');if(b){goPage('reader');readerTab('search');document.getElementById('fullSearch').value=b.dataset.term;searchOriginal(0);}});
 function csvCell(v){return '"'+String(v).replace(/"/g,'""')+'"';}
 function downloadCsv(rows,name){downloadBlob(new Blob(['\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),name);}
-async function exportWords(){if(!wordReady)return notify('请先生成分词统计');try{const rows=await researchTask('WORD_CSV');downloadCsv([['词语','次数'],...rows],'完整词语统计.csv');}catch(e){notify(e.message);}}
 function prepareScenes(){const entries=researchEntries(),options=entries.map((e,i)=>({value:i,label:e.display}));fillResearchSelect('sceneA',options,document.getElementById('sceneA').value||0);fillResearchSelect('sceneB',options,document.getElementById('sceneB').value||1);}
 async function searchScenes(page=0){const entries=researchEntries(),a=entries[Number(document.getElementById('sceneA').value)],b=entries[Number(document.getElementById('sceneB').value)];if(!rawText||!a||!b)return notify('请导入文本并设置两个目标词汇');if(a.display===b.display)return notify('请选择两个不同目标');document.getElementById('sceneInfo').textContent='正在查找共同出现…';try{const scope=document.getElementById('sceneScope').value,data=await researchTask('COOCCUR',{a:a.words,b:b.words,scope,window:Number(document.getElementById('sceneWindow').value),page:Math.max(0,page)});sceneRows=data.rows;scenePage=data.page;document.getElementById('sceneInfo').textContent='匹配 '+data.total+' 个'+(scope==='window'?'窗口（以目标 A 每次命中为中心，重叠窗口分别计数）':scope==='sentence'?'句子':'段落')+'；仅说明共同被提及。';document.getElementById('sceneRows').innerHTML=passageRows(data.rows,'scene',[...a.words,...b.words]);updatePager('scene',data.page,data.total);}catch(e){notify(e.message);}}
 async function scanCleaning(){if(!rawText)return notify('请先导入文本');document.getElementById('cleanInfo').textContent='正在检查…';try{cleanRows=await researchTask('CLEAN',{url:document.getElementById('cleanUrl').checked,ads:document.getElementById('cleanAds').checked,notes:document.getElementById('cleanNotes').checked,lines:document.getElementById('cleanLines').checked,chapters:document.getElementById('cleanChapters').checked,bounds:researchChapters()});cleanPreviewText=null;document.getElementById('cleanPreview').hidden=true;document.getElementById('cleanInfo').textContent='发现 '+cleanRows.length+' 条候选，默认均未勾选；请核查后选择。';document.getElementById('cleanCandidates').innerHTML=cleanRows.map((r,i)=>'<label class="clean-candidate"><input type="checkbox" data-clean="'+i+'"><span><strong>'+escapeHtml(r.reason)+' · 位置 '+r.start+'</strong><pre>'+escapeHtml(r.text.slice(0,500))+(r.text.length>500?'…':'')+'</pre><button class="chart-download" onclick="event.preventDefault();openReaderAt('+r.start+','+Math.min(r.text.length,200)+')">查看原文位置</button></span></label>').join('')||'<div class="empty-tip">未发现符合规则的候选</div>';}catch(e){notify(e.message);}}
@@ -2308,12 +2093,13 @@ async function addBookFiles(event){try{for(const file of event.target.files){con
 function addCurrentBook(){if(!rawText)return notify('请先导入正文');addBook({name:inputName||'当前正文',text:rawText});}
 function renderBookList(){document.getElementById('bookList').innerHTML=bookDocs.map((d,i)=>'<div class="book-row"><span>'+escapeHtml(d.name)+' · '+(typeof d.text==='string'?d.text.length.toLocaleString()+' 字符':'请重新导入这份文本')+'</span><button class="btn-clear" onclick="removeBook('+i+')">移除</button></div>').join('')||'<div class="tip">尚未加入对比文本。</div>';document.getElementById('bookTable').innerHTML=bookResult?bookTableHTML(bookResult):'';}
 function removeBook(index){bookDocs.splice(index,1);bookResult=null;renderBookList();}
-async function compareBooks(){const docs=bookDocs.filter(d=>typeof d.text==='string');if(docs.length<2)return notify('请加入至少两份完整文本');const mode=document.getElementById('bookMode').value,entries=researchEntries();if(mode==='targets'&&!entries.length)return notify('请先设置目标词汇');document.getElementById('bookInfo').textContent='正在比较…';try{bookResult=await researchTask('BOOKS',{docs,mode,entries,dictionary:dictWords(),stop:getAllStopwords()});document.getElementById('bookInfo').textContent=bookResult.docs.map(d=>d.name+'：'+d.chars.toLocaleString()+' 汉字').join('；')+'。按每万字次数的最大差值排列'+(mode==='words'?'；词语候选来自各文本前 100 项的并集':'')+'。';document.getElementById('bookTable').innerHTML=bookTableHTML(bookResult);}catch(e){notify(e.message);}}
+async function compareBooks(){const docs=bookDocs.filter(d=>typeof d.text==='string');if(docs.length<2)return notify('请加入至少两份完整文本');const entries=researchEntries();if(!entries.length)return notify('请先设置目标词汇');document.getElementById('bookInfo').textContent='正在比较…';try{bookResult=await researchTask('BOOKS',{docs,entries});document.getElementById('bookInfo').textContent=bookResult.docs.map(d=>d.name+'：'+d.chars.toLocaleString()+' 汉字').join('；')+'。按每万字次数的最大差值排列'+'。';document.getElementById('bookTable').innerHTML=bookTableHTML(bookResult);}catch(e){notify(e.message);}}
 function bookTableHTML(data){return '<table><thead><tr><th>词汇 / 目标</th>'+data.docs.map(d=>'<th>'+escapeHtml(d.name)+'<br>次数 / 每万字</th>').join('')+'</tr></thead><tbody>'+data.rows.map(r=>'<tr><td>'+escapeHtml(r.word)+'</td>'+r.counts.map((n,i)=>'<td>'+n+' / '+r.rates[i].toFixed(2)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
 function exportBookComparison(){if(!bookResult)return notify('请先完成多文本对比');downloadCsv([['词汇',...bookResult.docs.flatMap(d=>[d.name+' 次数',d.name+' 每万字'])],...bookResult.rows.map(r=>[r.word,...r.counts.flatMap((n,i)=>[n,r.rates[i].toFixed(4)])])],'多文本对比.csv');}
-function researchState(includeText=false){return {quotes:quoteItems,dictionary:document.getElementById('userDictionary').value,dictTargets:document.getElementById('dictTargets').checked,reportTitle:document.getElementById('reportTitle').value,reportNotes:document.getElementById('reportNotes').value,books:bookDocs.map(d=>({name:d.name,fingerprint:d.fingerprint,...(includeText&&typeof d.text==='string'?{text:d.text}:{})}))};}
+function researchState(includeText=false){return {quotes:quoteItems,reportTitle:document.getElementById('reportTitle').value,reportNotes:document.getElementById('reportNotes').value,books:bookDocs.map(d=>({name:d.name,fingerprint:d.fingerprint,...(includeText&&typeof d.text==='string'?{text:d.text}:{})}))};}
 function saveResearchSettings(){try{const state=researchState(false);delete state.books;localStorage.setItem(RESEARCH_KEY,JSON.stringify(state));return true;}catch(e){notify('收藏或设置无法自动保存，请保存项目文件');return false;}}
-function restoreResearch(state){if(!state||typeof state!=='object')return;quoteItems=Array.isArray(state.quotes)?state.quotes.filter(q=>q&&typeof q.text==='string'&&typeof q.id==='string'&&Number.isSafeInteger(q.start)&&Number.isSafeInteger(q.end)).map(q=>({id:q.id,text:q.text,source:String(q.source||''),name:String(q.name||''),chapter:String(q.chapter||''),start:q.start,end:q.end,tags:String(q.tags||''),note:String(q.note||'')})):[];document.getElementById('userDictionary').value=String(state.dictionary||'');document.getElementById('dictTargets').checked=state.dictTargets!==false;document.getElementById('reportTitle').value=String(state.reportTitle||'小说文本分析报告');document.getElementById('reportNotes').value=String(state.reportNotes||'');if(Array.isArray(state.books))bookDocs=state.books.slice(0,10).filter(d=>d&&typeof d.name==='string').map(d=>({name:d.name,fingerprint:String(d.fingerprint||''),...(typeof d.text==='string'?{text:d.text}:{})}));renderQuotes();renderBookList();}
+// v1.1 兼容 v1 项目；旧词典字段不再使用，其他研究数据保留。
+function restoreResearch(state){if(!state||typeof state!=='object')return;quoteItems=Array.isArray(state.quotes)?state.quotes.filter(q=>q&&typeof q.text==='string'&&typeof q.id==='string'&&Number.isSafeInteger(q.start)&&Number.isSafeInteger(q.end)).map(q=>({id:q.id,text:q.text,source:String(q.source||''),name:String(q.name||''),chapter:String(q.chapter||''),start:q.start,end:q.end,tags:String(q.tags||''),note:String(q.note||'')})):[];document.getElementById('reportTitle').value=String(state.reportTitle||'小说文本分析报告');document.getElementById('reportNotes').value=String(state.reportNotes||'');if(Array.isArray(state.books))bookDocs=state.books.slice(0,10).filter(d=>d&&typeof d.name==='string').map(d=>({name:d.name,fingerprint:String(d.fingerprint||''),...(typeof d.text==='string'?{text:d.text}:{})}));renderQuotes();renderBookList();}
 function prepareReportCharts(){document.getElementById('reportCharts').innerHTML=Object.keys(chartInstances).length?'<span class="tip">选入报告的图表：</span>'+Object.keys(chartInstances).map(id=>'<label><input type="checkbox" data-report-chart="'+id+'" checked> '+escapeHtml(document.getElementById(id)?.closest('.chart-box')?.querySelector('.chart-title')?.textContent||id)+'</label>').join(''):'<p class="tip">先在“词汇分布”中打开需要的图表，再回到此页选择导出。</p>';}
 function checked(id){return document.getElementById(id).checked;}
 function simpleTable(head,rows){return '<table><thead><tr>'+head.map(v=>'<th>'+escapeHtml(v)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+escapeHtml(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
@@ -2321,7 +2107,6 @@ async function buildReport(){let sections=[];const title=document.getElementById
  if(checked('repSummary'))sections.push('<h2>分析概况</h2>'+simpleTable(['项目','内容'],[['文本',inputName||'未命名'],['汉字数',(rawText.match(/[\u3400-\u9fff]/g)||[]).length],['章节数',researchChapters().length],['字串筛选',document.getElementById('mustInclude').value||'无限制'],['停用词数',getAllStopwords().length],['统计口径','人物按别名最长优先非重叠匹配；频率按每万汉字计算']]));
  if(checked('repProfiles')&&rawText){profileRows=await researchTask('PROFILES',{entries:researchEntries(),chapters:researchChapters()});if(profileRows.length)sections.push('<h2>人物与目标词汇</h2>'+simpleTable(['目标','次数','章节覆盖','首次出现','最后出现','别名次数'],profileRows.map(e=>[e.display,e.total,e.coverage,profileLocation(e.first),profileLocation(e.last),Object.entries(e.byAlias).map(([w,n])=>w+': '+n).join('；')])));}
  if(checked('repNgrams')&&resultData)for(const [name,key]of[['二字字串','bigram'],['三字字串','trigram'],['四字字串','fourgram'],['五字字串','fivegram']])sections.push('<h2>'+name+'前 20 项</h2>'+simpleTable(['字串','次数'],resultData[key].slice(0,20)));
- if(checked('repWords')&&wordLastRows.length)sections.push('<h2>完整词语（当前结果页）</h2>'+simpleTable(['词语','次数'],wordLastRows));
  if(checked('repComparison')&&document.getElementById('compareTable').innerHTML)sections.push('<h2>章节对比</h2><p>'+escapeHtml(document.getElementById('compareInfo').textContent)+'</p>'+document.getElementById('compareTable').innerHTML);
  if(checked('repBooks')&&bookResult)sections.push('<h2>多文本对比</h2>'+bookTableHTML(bookResult));
  for(const box of document.querySelectorAll('[data-report-chart]:checked')){const chart=chartInstances[box.dataset.reportChart];if(chart)sections.push('<h2>词汇分布图</h2><img alt="词汇分布图" src="'+chart.getDataURL({type:'png',pixelRatio:2,backgroundColor:'#fff'})+'">');}
@@ -2332,11 +2117,10 @@ async function buildReport(){let sections=[];const title=document.getElementById
 async function previewReport(){try{const frame=document.getElementById('reportPreview');frame.srcdoc=await buildReport();frame.hidden=false;}catch(e){notify(e.message);}}
 async function exportReport(){try{downloadBlob(new Blob([await buildReport()],{type:'text/html;charset=utf-8'}),'小说分析报告.html');}catch(e){notify(e.message);}}
 async function printReport(){const popup=window.open('','_blank');if(!popup)return notify('请允许此页面打开打印窗口');try{popup.document.write(await buildReport());popup.onload=()=>popup.print();popup.document.close();}catch(e){popup.close();notify(e.message);}}
-function dictionaryChanged(){if(researchRequests.size)resetResearchWorker();wordReady=false;wordLastRows=[];bookResult=null;document.getElementById('wordTable').innerHTML='';document.getElementById('wordInfo').textContent='词典已变化，请重新生成分词统计。';document.getElementById('bookTable').innerHTML='';document.getElementById('reportPreview').hidden=true;saveResearchSettings();}
 const originalGoPage=goPage;
 goPage=function(id){originalGoPage(id);if(id==='reader')prepareReader();if(id==='quotes')renderQuotes();if(id==='profiles'){if(!profileRows.length)loadProfiles();else renderProfiles();}if(id==='books')renderBookList();if(id==='report')prepareReportCharts();if(id==='chapters')prepareScenes();};
 const originalInvalidate=invalidateResults;
-invalidateResults=function(){originalInvalidate();if(researchText!==rawText||researchRequests.size)resetResearchWorker();profileRows=[];wordReady=false;wordLastRows=[];bookResult=null;document.getElementById('bookTable').innerHTML='';document.getElementById('bookInfo').textContent='请重新运行对比以使用当前设置。';document.getElementById('reportPreview').hidden=true;searchRows=[];sceneRows=[];cleanRows=[];cleanPreviewText=null;document.getElementById('profileCards').innerHTML='';document.getElementById('wordTable').innerHTML='';document.getElementById('wordInfo').textContent='正文或设置已变化，请重新生成分词统计。';document.getElementById('fullSearchRows').innerHTML='';document.getElementById('sceneRows').innerHTML='';document.getElementById('cleanCandidates').innerHTML='';document.getElementById('cleanPreview').hidden=true;};
+invalidateResults=function(){originalInvalidate();if(researchText!==rawText||researchRequests.size)resetResearchWorker();profileRows=[];bookResult=null;document.getElementById('bookTable').innerHTML='';document.getElementById('bookInfo').textContent='请重新运行对比以使用当前设置。';document.getElementById('reportPreview').hidden=true;searchRows=[];sceneRows=[];cleanRows=[];cleanPreviewText=null;document.getElementById('profileCards').innerHTML='';document.getElementById('fullSearchRows').innerHTML='';document.getElementById('sceneRows').innerHTML='';document.getElementById('cleanCandidates').innerHTML='';document.getElementById('cleanPreview').hidden=true;};
 const originalHandleWorker=handleWorkerMessage;
 handleWorkerMessage=function(data){originalHandleWorker(data);if(data.type==='ANALYZED'||data.type==='CHAPTERS_UPDATED'){prepareReader();prepareScenes();profileRows=[];}};
 const originalRefreshInsights=refreshInsights;
@@ -2360,28 +2144,28 @@ function analysisSignature(){return JSON.stringify([sourceID(),collectConfig(),c
 function v8UIState(){const fields={};for(const el of document.querySelectorAll('.page input[id]:not([type=file]),.page select[id]')){if(/-label$|-words$/.test(el.id)||/^(aliasInput|event|draft|quoteBatch)/.test(el.id)||['reportTitle','quoteTags','quoteCategory'].includes(el.id))continue;fields[el.id]={value:el.value,checked:el.checked};}return {source:sourceID(),fields,readerStart,readerFocus,readerTab:$('reader-search').hidden?'read':'search',pagePositions};}
 function applyRestoredUI(){if(!restoredUI||restoredUI.source!==sourceID())return;const state=restoredUI;for(const [id,value]of Object.entries(state.fields||{})){const el=$(id);if(el&&el.type!=='file'){if(el.tagName!=='SELECT'||[...el.options].some(o=>o.value===value.value))el.value=value.value;if(el.type==='checkbox')el.checked=!!value.checked;}}readerStart=Math.max(0,Number(state.readerStart)||0);readerFocus=state.readerFocus&&Number.isFinite(state.readerFocus.pos)?state.readerFocus:null;pagePositions=state.pagePositions||{};readerTab(state.readerTab==='search'?'search':'read');restoredUI=null;readChapter(readerStart);}
 const v8ResearchState=researchState;
-researchState=function(includeText=false){return {...v8ResearchState(includeText),timelineEvents,reviewDrafts,activeDraftId,draftSectionKey,ui:v8UIState(),reportTemplate:$('reportTemplate').value,reportNgramScope:$('reportNgramScope').value,reportWordScope:$('reportWordScope').value};};
+researchState=function(includeText=false){return {...v8ResearchState(includeText),timelineEvents,reviewDrafts,activeDraftId,draftSectionKey,ui:v8UIState(),reportTemplate:$('reportTemplate').value,reportNgramScope:$('reportNgramScope').value};};
 function restoreV8(state){if(!state||typeof state!=='object')return;
  timelineEvents=Array.isArray(state.timelineEvents)?state.timelineEvents.filter(e=>e&&typeof e.id==='string'&&typeof e.source==='string'&&Number.isSafeInteger(e.start)).map(e=>({id:e.id,source:e.source,start:e.start,quoteId:String(e.quoteId||''),person:String(e.person||''),stage:String(e.stage||''),time:String(e.time||''),title:String(e.title||''),note:String(e.note||'')})):[];
  reviewDrafts=Array.isArray(state.reviewDrafts)?state.reviewDrafts.filter(d=>d&&typeof d.id==='string'&&typeof d.source==='string').map(d=>({id:d.id,source:d.source,title:String(d.title||''),person:String(d.person||''),kind:String(d.kind||'人物分析'),tags:String(d.tags||''),sections:Object.fromEntries(Object.keys(V8_SECTIONS).map(k=>[k,String(d.sections?.[k]||'')]))})):[];
  if(Array.isArray(state.quotes))for(const q of quoteItems){const saved=state.quotes.find(x=>x.id===q.id);q.category=QUOTE_CATEGORIES.includes(saved?.category)?saved.category:'未分类';}
- restoredUI=state.ui||null;for(const [id,key]of[['reportTemplate','reportTemplate'],['reportNgramScope','reportNgramScope'],['reportWordScope','reportWordScope']])if(state[key])$(id).value=String(state[key]);
+ restoredUI=state.ui||null;for(const [id,key]of[['reportTemplate','reportTemplate'],['reportNgramScope','reportNgramScope']])if(state[key])$(id).value=String(state[key]);
  activeDraftId=reviewDrafts.some(d=>d.id===state.activeDraftId)?state.activeDraftId:'';if(V8_SECTIONS[state.draftSectionKey]){$('draftSection').value=state.draftSectionKey;draftSectionKey=state.draftSectionKey;}quoteSelection.clear();renderQuotes();renderTimeline();
 }
 const v8Restore=restoreResearch;restoreResearch=function(state){v8Restore(state);restoreV8(state);};
 const v8PrepareReader=prepareReader;
 prepareReader=function(){const fp=sourceID(),same=readerPreparedSource===fp,from=$('searchFrom').value,to=$('searchTo').value,chapter=$('readerChapter').value,pos=readerStart;v8PrepareReader();if(same){$('searchFrom').value=from;$('searchTo').value=to;$('readerChapter').value=chapter;readChapter(pos);}else{readerStart=0;readerFocus=null;$('readerChapter').value='0';readerPreparedSource=fp;readChapter(0);}applyRestoredUI();};
 const v8GoPage=goPage;
-goPage=function(id){pagePositions[activePage()]=window.scrollY||0;v8GoPage(id);document.querySelectorAll('.nav [data-page]').forEach(btn=>{btn.classList.toggle('active-nav',btn.dataset.page===id);if(btn.dataset.page===id)btn.closest('details').open=true;});$('workspaceLocation').textContent=document.querySelector('#'+id+' h1')?.textContent||'文析';$('workspaceText').textContent=inputName||'尚未加载文本';if(id==='aliases')prepareAliases();if(id==='timeline')prepareTimeline();if(id==='workshop')prepareWorkshop();if(id==='report')reportReadiness();if(id==='books')renderBookBars();if(id==='reader')$('readerReturn').hidden=!returnLocation;window.scrollTo({top:pagePositions[id]||0,behavior:'auto'});};
+goPage=function(id){pagePositions[activePage()]=window.scrollY||0;v8GoPage(id);document.querySelectorAll('.nav [data-page]').forEach(btn=>{btn.classList.toggle('active-nav',btn.dataset.page===id);if(btn.dataset.page===id){const group=btn.closest('details');if(group)group.open=true;}});$('workspaceLocation').textContent=document.querySelector('#'+id+' h1')?.textContent||(id==='home'?'首页':'文析');$('workspaceText').textContent=inputName||'尚未加载文本';if(id==='aliases')prepareAliases();if(id==='timeline')prepareTimeline();if(id==='workshop')prepareWorkshop();if(id==='report')reportReadiness();if(id==='books')renderBookBars();if(id==='reader')$('readerReturn').hidden=!returnLocation;window.scrollTo({top:pagePositions[id]||0,behavior:'auto'});};
 const v8OpenReader=openReaderAt;
 openReaderAt=function(pos,length=1){if(activePage()!=='reader')returnLocation={page:activePage(),scroll:window.scrollY||0};v8OpenReader(pos,length);$('readerReturn').hidden=!returnLocation;};
 function returnFromReader(){if(!returnLocation)return;const destination=returnLocation;returnLocation=null;goPage(destination.page);window.scrollTo({top:destination.scroll,behavior:'auto'});}
 const v8InputStatus=inputStatus;inputStatus=function(){const next=sourceID();if(next!==workflowSource){editingEventId='';workflowSource=next;for(const id of ['eventPerson','eventTime','eventTitle','eventNote'])$(id).value='';}v8InputStatus();$('workspaceText').textContent=inputName||'尚未加载文本';returnLocation=null;};
 // 结果缓存仅驻留当前页面会话，不会把整本小说自动写入浏览器存储。
 const v8Task=researchTask;
-researchTask=async function(type,args={}){const pure=['SEARCH','PROFILES','COOCCUR','CLEAN','BOOKS'].includes(type),key=pure?sourceID()+'|'+type+'|'+textFingerprint(JSON.stringify(args)):'';if(key&&researchCache.has(key))return structuredClone(researchCache.get(key));lastResearchAction={type,args};$('taskStatus').hidden=false;$('taskRetry').hidden=true;$('taskCancel').hidden=false;$('taskStatusText').textContent=({SEARCH:'搜索原文',PROFILES:'统计人物',SEGMENT:'中文分词',COOCCUR:'查找共同提及',CLEAN:'检查正文',BOOKS:'多文本对比',WORD_CSV:'整理完整词频',WORD_QUERY:'读取词频'}[type]||'处理任务')+'…';try{const value=await v8Task(type,args);if(key){researchCache.set(key,structuredClone(value));while(researchCache.size>12)researchCache.delete(researchCache.keys().next().value);}if(!researchRequests.size)$('taskStatus').hidden=true;return value;}catch(e){$('taskCancel').hidden=true;$('taskRetry').hidden=false;$('taskStatusText').textContent=e.message;throw e;}};
-function cancelResearchTask(){resetResearchWorker();wordReady=false;wordLastRows=[];$('wordTable').innerHTML='';$('wordInfo').textContent='任务已取消，分词统计可重新生成。';$('taskStatusText').textContent='任务已取消';$('taskCancel').hidden=true;$('taskRetry').hidden=false;}
-function retryResearchTask(){const type=lastResearchAction?.type;const run={SEARCH:()=>searchOriginal(searchPage),PROFILES:loadProfiles,SEGMENT:runSegmentation,COOCCUR:()=>searchScenes(scenePage),CLEAN:scanCleaning,BOOKS:compareBooks,WORD_QUERY:runSegmentation,WORD_CSV:runSegmentation}[type];if(run)run();}
+researchTask=async function(type,args={}){const pure=['SEARCH','PROFILES','COOCCUR','CLEAN','BOOKS'].includes(type),key=pure?sourceID()+'|'+type+'|'+textFingerprint(JSON.stringify(args)):'';if(key&&researchCache.has(key))return structuredClone(researchCache.get(key));lastResearchAction={type,args};$('taskStatus').hidden=false;$('taskRetry').hidden=true;$('taskCancel').hidden=false;$('taskStatusText').textContent=({SEARCH:'搜索原文',PROFILES:'统计人物',COOCCUR:'查找共同提及',CLEAN:'检查正文',BOOKS:'多文本对比'}[type]||'处理任务')+'…';try{const value=await v8Task(type,args);if(key){researchCache.set(key,structuredClone(value));while(researchCache.size>12)researchCache.delete(researchCache.keys().next().value);}if(!researchRequests.size)$('taskStatus').hidden=true;return value;}catch(e){$('taskCancel').hidden=true;$('taskRetry').hidden=false;$('taskStatusText').textContent=e.message;throw e;}};
+function cancelResearchTask(){resetResearchWorker();$('taskStatusText').textContent='任务已取消';$('taskCancel').hidden=true;$('taskRetry').hidden=false;}
+function retryResearchTask(){const type=lastResearchAction?.type;const run={SEARCH:()=>searchOriginal(searchPage),PROFILES:loadProfiles,COOCCUR:()=>searchScenes(scenePage),CLEAN:scanCleaning,BOOKS:compareBooks}[type];if(run)run();}
 const v8Invalidate=invalidateResults;
 invalidateResults=function(){analysisGeneration++;for(const request of analysisReportRequests.values())request.reject(new Error('输入或设置已变化，请重新生成报告'));analysisReportRequests.clear();v8Invalidate();chapterBusy=false;chapterBackup=null;for(const id of ['chapterBars','bookBars']){$(id).innerHTML='';$(id).hidden=true;}};
 const v8StartAnalyze=startAnalyze;
@@ -2448,9 +2232,9 @@ const v8Compare=renderComparison;renderComparison=function(){v8Compare();const b
 function openChapterDifference(index,range){const row=chapterCompareRows[index];if(!row)return;const [from,to]=row.ranges[range],counts=resultData.chapterDist[row.name];for(let i=from;i<=to;i++)if(counts[i])return openTargetContext(row.name,i);notify('该范围内没有这个目标的命中');}
 for(const id of ['compareAStart','compareAEnd','compareBStart','compareBEnd','compareGroup'])$(id).addEventListener('change',()=>renderComparison());
 // 报告明确列出缺失内容，支持完整筛选结果和不同用途模板。
-function reportFlags(){return ['repSummary','repProfiles','repNgrams','repWords','repComparison','repBooks','repQuotes','repTimeline','repDrafts'];}
+function reportFlags(){return ['repSummary','repProfiles','repNgrams','repComparison','repBooks','repQuotes','repTimeline','repDrafts'];}
 function applyReportTemplate(){const template=$('reportTemplate').value,sets={all:reportFlags(),person:['repSummary','repProfiles','repQuotes','repTimeline','repDrafts'],review:['repSummary','repProfiles','repNgrams','repQuotes','repTimeline','repDrafts'],versions:['repSummary','repBooks','repComparison']};for(const id of reportFlags())$(id).checked=(sets[template]||sets.all).includes(id);saveResearchSettings();reportReadiness();}
-function missingReportParts(){const fp=sourceID(),missing=[];if(!rawText)missing.push('尚未加载当前正文');if(checked('repNgrams')&&!resultData)missing.push('高频字串尚未分析');if(checked('repWords')&&!wordReady)missing.push('中文分词尚未生成或已失效');if(checked('repComparison')&&(!resultData||!$('compareTable').innerHTML))missing.push('章节对比尚未生成');if(checked('repBooks')&&!bookResult)missing.push('多文本对比尚未生成或已失效');if(checked('repQuotes')&&!quoteItems.some(q=>q.source===fp))missing.push('当前正文没有引用素材');if(checked('repTimeline')&&!sourceEvents().length)missing.push('当前正文没有时间线事件');if(checked('repDrafts')&&!reviewDrafts.some(d=>d.source===fp))missing.push('当前正文没有书评稿件');return missing;}
+function missingReportParts(){const fp=sourceID(),missing=[];if(!rawText)missing.push('尚未加载当前正文');if(checked('repNgrams')&&!resultData)missing.push('高频字串尚未分析');if(checked('repComparison')&&(!resultData||!$('compareTable').innerHTML))missing.push('章节对比尚未生成');if(checked('repBooks')&&!bookResult)missing.push('多文本对比尚未生成或已失效');if(checked('repQuotes')&&!quoteItems.some(q=>q.source===fp))missing.push('当前正文没有引用素材');if(checked('repTimeline')&&!sourceEvents().length)missing.push('当前正文没有时间线事件');if(checked('repDrafts')&&!reviewDrafts.some(d=>d.source===fp))missing.push('当前正文没有书评稿件');return missing;}
 function reportReadiness(){const missing=missingReportParts();$('reportReadiness').hidden=!missing.length;$('reportReadiness').innerHTML='<strong>以下内容尚未准备好</strong><p>'+missing.map(escapeHtml).join('；')+'。</p><p>仍可导出，报告中会明确标记这些缺项。</p>';}
 function staticBars(id){const clone=$(id).cloneNode(true);clone.querySelectorAll('[onclick]').forEach(el=>el.removeAttribute('onclick'));return clone.innerHTML;}
 function timelineReport(){return sourceEvents().map(e=>{const q=quoteItems.find(q=>q.id===e.quoteId);return '<h3>'+escapeHtml(e.person)+' · '+escapeHtml(e.stage)+' · '+escapeHtml(e.title)+'</h3><p class="pre">'+escapeHtml(e.time)+' '+escapeHtml(e.note)+'</p>'+(q?'<blockquote>'+escapeHtml(q.text)+'</blockquote><small>'+escapeHtml(q.chapter)+' · 原文位置 '+q.start+'</small>':'<p>原引用已移除。</p>');}).join('');}
@@ -2458,7 +2242,6 @@ buildReport=async function(){reportReadiness();const title=$('reportTitle').valu
  if(checked('repSummary'))parts.push('<h2>分析概况与统计口径</h2>'+simpleTable(['项目','内容'],[['正文',inputName||'未命名'],['汉字数',(rawText.match(/[\u3400-\u9fff]/g)||[]).length],['章节数',researchChapters().length],['筛选条件',$('mustInclude').value||'无限制'],['停用词数量',getAllStopwords().length],['人物统计','每个目标内的别名按最长优先、非重叠匹配；跨目标的重复别名分别计数'],['频率','每万汉字次数；共同提及不代表人物互动'],['正文识别码',fp]]));
  if(checked('repProfiles')&&rawText){const rows=await researchTask('PROFILES',{entries:researchEntries(),chapters:researchChapters()});parts.push('<h2>人物概览</h2>'+(rows.length?simpleTable(['目标','次数','覆盖章节','首次','最后','别名次数'],rows.map(e=>[e.display,e.total,e.coverage,profileLocation(e.first),profileLocation(e.last),Object.entries(e.byAlias).map(([w,n])=>w+'：'+n).join('；')])):'<p>没有配置人物或目标词汇。</p>'));}
  if(checked('repNgrams')&&resultData){const all=$('reportNgramScope').value==='filtered';for(const [name,key,field]of[['二字字串','bi','bigram'],['三字字串','tri','trigram'],['四字字串','four','fourgram'],['五字字串','five','fivegram']]){const rows=all?await allNgrams(key):resultData[field].slice(0,20);parts.push('<h2>'+name+' · '+(all?'全部筛选结果':'前 20 项')+'</h2><p>'+escapeHtml(all?'包含：'+($(key+'Search').value||'不限')+'；最低次数：'+($(key+'Min').value||1):'按出现次数降序')+'；共 '+rows.length+' 项。</p>'+simpleTable(['字串','次数'],rows));}}
- if(checked('repWords')&&wordReady){const scope=$('reportWordScope').value,rows=scope==='page'?wordLastRows:(await researchTask('WORD_CSV')).filter(r=>r[0].includes($('wordSearch').value)&&r[1]>=Math.max(1,Number($('wordMin').value)||1));parts.push('<h2>完整词语 · '+(scope==='page'?'当前结果页':'全部筛选结果')+'</h2><p>包含：'+escapeHtml($('wordSearch').value||'不限')+'；最低次数：'+escapeHtml($('wordMin').value||1)+'；共 '+rows.length+' 项。</p>'+simpleTable(['词语','次数'],rows));}
  if(checked('repComparison')&&resultData&&$('compareTable').innerHTML)parts.push('<h2>章节对比</h2><p>'+escapeHtml($('compareInfo').textContent)+'</p>'+$('compareTable').innerHTML+staticBars('chapterBars'));
  if(checked('repBooks')&&bookResult)parts.push('<h2>多文本对比</h2><p>'+escapeHtml($('bookInfo').textContent)+'</p>'+bookTableHTML(bookResult)+staticBars('bookBars'));
  for(const box of document.querySelectorAll('[data-report-chart]:checked')){const chart=chartInstances[box.dataset.reportChart];if(chart)parts.push('<h2>词汇分布图</h2><img alt="词汇分布图" src="'+chart.getDataURL({type:'png',pixelRatio:2,backgroundColor:'#fff'})+'">');}
